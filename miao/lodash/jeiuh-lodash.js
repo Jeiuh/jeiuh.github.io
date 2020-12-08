@@ -13,5 +13,13 @@ var jeiuh = {
         }
         return ary1
     }
+    
+   chunk: function(ary, size) {
+        var ary1 = [];
+        for (var i = 0; i < ary.length; i = i + size) {
+            ary1.push(ary.slice(i, i + size));
+        }
+        return ary1;
+    }
 
 }
