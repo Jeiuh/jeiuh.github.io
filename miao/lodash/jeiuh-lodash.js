@@ -12,7 +12,7 @@ var jeiuh = {
             ary1.push(i)
         }
         return ary1
-    }
+    },
     
    chunk: function(ary, size) {
         var ary1 = [];
