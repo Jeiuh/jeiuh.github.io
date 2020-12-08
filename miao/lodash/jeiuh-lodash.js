@@ -20,6 +20,16 @@ var jeiuh = {
             ary1.push(ary.slice(i, i + size));
         }
         return ary1;
+    },
+    
+    compact: function(ary) {
+        var ary1 = []
+        for (let i = 0; i < ary.length; i++) {
+            if (ary[i]) {
+                ary1.push(ary[i])
+            }
+            return ary1
+        }
     }
 
 }
