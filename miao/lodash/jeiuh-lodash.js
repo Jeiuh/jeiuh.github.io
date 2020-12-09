@@ -30,6 +30,19 @@ var jeiuh = {
             }
         }
         return ary1
+    },
+    
+    diferece: function(ary, ary1) {
+        var ary2 = []
+        for (let i = 0; i < ary.length; i++) {
+            for (let j = 0; j < ary1.length; j++) {
+                if (ary[i] == ary1[j]) {
+                    ary.splice(i,1)
+                    }
+            }
+
+        }
+        return ary
     }
 
 }
