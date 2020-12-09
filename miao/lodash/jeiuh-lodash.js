@@ -25,7 +25,7 @@ var jeiuh = {
     compact: function(ary) {
         var ary1 = []
         for (let i = 0; i < ary.length; i++) {
-            if(ary[i] != false && ary[i] != null && ary[i] != 0 && ary[i] != "" && ary[i] != undefined && ary[i] != NaN) {
+            if(ary[i]) {
             ary1.push(ary[i])
             }
         }
