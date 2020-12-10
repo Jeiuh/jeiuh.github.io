@@ -64,6 +64,19 @@ var jeiuh = {
 
         }
         return ary2
-   }
+   },
+    
+    function differenceWith(ary,ary1,comparator) {
+        var ary2 = []
+        for (let i = 0; i < ary.length; i++) {
+            for (let j = 0; j < ary1.length; j++) {
+                if(!comparator(ary[i],ary1[j])) {
+                    ary2.push(ary[i])
+                }
+            }
+      
+        }
+        return ary2
+  }
 
 }
