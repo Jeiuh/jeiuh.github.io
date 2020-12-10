@@ -77,6 +77,20 @@ var jeiuh = {
       
         }
         return ary2
+  },
+      
+  function dropRightWhile(ary, predicate) {
+    var ary1 = ary.reverse()
+    var ary3 = []
+    for (let i = 0; i < ary1.length; i++) {
+        if (!predicate(ary1[i])) {
+            ary3 = ary1.slice(i)
+            break
+        }
+
+    }
+    var ary2 = ary3.reverse()
+    return ary2
   }
 
 }
