@@ -91,6 +91,17 @@ var jeiuh = {
     }
     var ary2 = ary3.reverse()
     return ary2
+  },
+    
+  dropWhile: function(ary, predicate) {
+    for (let i = 0; i < ary.length; i++) {
+        if (!predicate(ary[i])) {
+        ary1 = ary.slice(i)
+        break
+        }
+
+    }
+    return ary1
   }
 
 }
