@@ -43,6 +43,27 @@ var jeiuh = {
 
         }
         return ary
-    }
+    },
+    
+    differenceBy: function(ary, ary1, iteratee) {
+        var ary2 = []
+        var ary3 = []
+        for (let i = 0; i < ary.length; i++) {
+            ary2.push(iteratee(ary[i]))
+        }
+        for (let i = 0; i < ary1.length; i++) {
+            ary3.push(iteratee(ary1[i]))
+        }
+
+        for (let i = 0; i < ary2.length; i++) {
+            for (let j = 0; j < ary3.length; j++) {
+                if (ary2[i] == ary3[j]) {
+                    ary2.splice(i, 1)
+                }
+            }
+
+        }
+        return ary2
+   }
 
 }
