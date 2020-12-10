@@ -66,7 +66,7 @@ var jeiuh = {
         return ary2
    },
     
-    function differenceWith(ary,ary1,comparator) {
+    differenceWith: function(ary,ary1,comparator) {
         var ary2 = []
         for (let i = 0; i < ary.length; i++) {
             for (let j = 0; j < ary1.length; j++) {
@@ -79,7 +79,7 @@ var jeiuh = {
         return ary2
   },
       
-  function dropRightWhile(ary, predicate) {
+  dropRightWhile: function(ary, predicate) {
     var ary1 = ary.reverse()
     var ary3 = []
     for (let i = 0; i < ary1.length; i++) {
