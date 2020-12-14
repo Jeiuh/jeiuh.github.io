@@ -6,7 +6,7 @@ var jeiuh = {
     }
   },
 
-  dropright: function (ary, n = 1) {
+  dropRight: function (ary, n = 1) {
     var ary1 = new Array()
     for (let i = 1; i <= ary.length - n; i++) {
       ary1.push(i)
