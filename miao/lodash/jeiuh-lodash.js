@@ -32,7 +32,7 @@ var jeiuh = {
         return ary1
     },
     
-    diferece: function(ary, ary1) {
+    difference: function(ary, ary1) {
         var ary2 = []
         for (let i = 0; i < ary.length; i++) {
             for (let j = 0; j < ary1.length; j++) {
@@ -102,6 +102,17 @@ var jeiuh = {
 
     }
     return ary1
-  }
+  },
+    
+    fill: function(ary, val, sta, end) {
+        var ary1 = []
+        for (let i = 0; i < ary.length; i++) {
+            if (i >= sta && i < end) {
+                ary[i] = val
+            }
+
+        }
+        return ary
+    }
 
 }
