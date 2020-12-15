@@ -6,7 +6,7 @@ var jeiuh = {
     }
   },
 
-  dropRight: function (ary, n = 1) {
+  dropright: function (ary, n = 1) {
     var ary1 = new Array()
     for (let i = 1; i <= ary.length - n; i++) {
       ary1.push(i)
@@ -113,6 +113,76 @@ var jeiuh = {
 
     }
     return ary
+  },
+
+  flatten: function (ary) {
+    for (let i = 0; i < ary.length; i++) {
+      if (ary[i].length >= 0) {
+        ary1 = ary.flat(1)
+      }
+    }
+    return ary1
+  },
+
+  flattenDeep: function (ary) {
+    for (let i = 0; i < ary.length; i++) {
+      if (ary[i].length >= 0) {
+        ary1 = ary.flat(Infinity)
+      }
+    }
+    return ary1
+  },
+
+  flattenDepth: function (ary, d = 1) {
+    for (let i = 0; i < ary.length; i++) {
+      if (ary[i].length >= 0) {
+        ary1 = ary.flat(d)
+      }
+    }
+    return ary1
+  },
+
+  fromPairs: function (pairs) {
+    var obj = {}
+    for (let i = 0; i < pairs.length; i++) {
+      obj[pairs[i][0]] = pairs[i][1]
+    }
+    return obj
+  },
+
+  head: function (ary) {
+    if (ary.length === 0) {
+      return undefined
+    }
+    return ary[0]
+  },
+
+  indexOf: function (ary, val, ind = 0) {
+    for (let i = ind; i < ary.length; i++) {
+      if (ary[i] == val) {
+        return i
+      }
+    }
+    return -1
+  },
+
+  initial: function (ary) {
+    ary.pop()
+    return ary
+  },
+
+  intersection: function (ary, ...args) {
+    let ary1 = [];
+    for (let a of args) {
+      for (let b of a) {
+        if (ary.includes(b)) {
+          ary1.push(b);
+        }
+      }
+      ary = ary1;
+      ary1 = []
+    }
+    return ary;
   }
 
 }
