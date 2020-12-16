@@ -183,6 +183,28 @@ var jeiuh = {
       ary1 = []
     }
     return ary;
+  },
+
+  identity: function (val) {
+    return val
+  },
+
+  mapValues: function (obj, mapper) {
+    var res = {}
+    for (let key in obj) {
+      var val = obj[key]
+      res[key] = mapper(val, key, obk)
+    }
+    return res
+  },
+
+  mapkeys: function (obj, mapper) {
+    var res = {}
+    for (let key in obj) {
+      var val = obj[key]
+      res[mapper(val, key, obk)] = val
+    }
+    return res
   }
 
 }
