@@ -6,7 +6,7 @@ var jeiuh = {
     }
   },
 
-  dropright: function (ary, n = 1) {
+  dropRight: function (ary, n = 1) {
     var ary1 = new Array()
     for (let i = 1; i <= ary.length - n; i++) {
       ary1.push(i)
@@ -32,11 +32,11 @@ var jeiuh = {
     return ary1
   },
 
-  difference: function (ary, ary1) {
-    var ary2 = []
+  difference: function (ary, ...ary1) {
+    var ary2 = ary1.flat(2)
     for (let i = 0; i < ary.length; i++) {
-      for (let j = 0; j < ary1.length; j++) {
-        if (ary[i] == ary1[j]) {
+      for (let j = 0; j < ary2.length; j++) {
+        if (ary[i] == ary2[j]) {
           ary.splice(i, 1)
         }
       }
@@ -205,6 +205,38 @@ var jeiuh = {
       res[mapper(val, key, obk)] = val
     }
     return res
+  },
+
+  join: function (array, separator = ',') {
+    return array.join(separator)
+  },
+
+  last: function (array) {
+    return array.pop()
+  },
+
+  lastIndexOf: function (array, value, fromIndex) {
+    return array.lastIndexOf(value, fromIndex)
+  },
+
+  nth: function (array, n = 0) {
+    if (n >= 0) {
+      var num = array[n]
+    } else {
+      var num = array[array.length - Math.abs(n)]
+    }
+    return num
+  },
+
+  pull: function (array, ...values) {
+    var arr = []
+    for (let i = 0; i < array.length; i++) {
+      if (!values.includes(array[i])) {
+        arr.push(array[i])
+      }
+
+    }
+    return arr
   }
 
 }
