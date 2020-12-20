@@ -104,8 +104,9 @@ var jeiuh = {
     return ary1
   },
 
-  fill: function (ary, val, sta, end) {
+  fill: function (ary, val, sta = 0, end = ary.length) {
     var ary1 = []
+
     for (let i = 0; i < ary.length; i++) {
       if (i >= sta && i < end) {
         ary[i] = val
@@ -215,7 +216,7 @@ var jeiuh = {
     return array.pop()
   },
 
-  lastIndexOf: function (array, value, fromIndex) {
+  lastIndexOf: function (array, value, fromIndex = array.length - 1) {
     return array.lastIndexOf(value, fromIndex)
   },
 
@@ -228,15 +229,259 @@ var jeiuh = {
     return num
   },
 
-  pull: function (array, ...values) {
-    var arr = []
+  pull: function (array, ...array1) {
+    let arr = []
     for (let i = 0; i < array.length; i++) {
-      if (!values.includes(array[i])) {
+      if (!array1.includes(array[i])) {
         arr.push(array[i])
       }
 
     }
     return arr
+  },
+
+  pullAll: function (array, array1) {
+    let arr = []
+    for (let i = 0; i < array.length; i++) {
+      if (!array1.includes(array[i])) {
+        arr.push(array[i])
+      }
+
+    }
+    return arr
+  },
+
+  reverse: function (array) {
+    let arr = []
+    for (let i = array.length - 1; i >= 0; i--) {
+      arr.push(array[i])
+
+    }
+    return arr
+  },
+
+  sortedIndex: function (arr, val) {
+    for (var i = 0; i < arr.length; i++) {
+      if (val <= arr[i]) {
+        return i;
+      }
+    }
+  },
+
+  sortedUniq: function (array) {
+    let arr = []
+    for (let iterator of array) {
+      if (!arr.includes(iterator)) {
+        arr.push(iterator)
+      }
+    }
+    return arr
+  },
+
+  sortedUniqBy: function (array, iteratee) {
+    let arr = []
+    let arr1 = []
+    for (let i = 0; i < array.length; i++) {
+      if (iteratee(array[i]) === iteratee(array[i + 1])) {
+        arr.push(array[i])
+      }
+    }
+    return arr
+  },
+
+  tail: function (array) {
+    array.shift()
+    return array
+  },
+
+  take: function (array, n = 1) {
+    array.splice(n)
+    return array
+  },
+
+  takeRight: function (array, n = 1) {
+    array.reverse()
+    array.splice(n)
+    return array.reverse()
+  },
+
+  takeRightWhile: function (array, predicate = _.identity) {
+    let arr = []
+    for (let i = array.length - 1; i >= 0; i--) {
+      if (predicate(ary[i]), index, array)
+        arr.unshift(ary[i])
+      else
+        return arr
+    }
+  },
+
+  takeWhile: function (array, predicate = _.identity) {
+    let arr = []
+    for (let i = 0; i < array.length; i++) {
+      if (predicate(ary[i]), index, array)
+        arr.unshift(ary[i])
+      else
+        return arr
+    }
+  },
+
+  union: function (...arrays) {
+    let arr = []
+    arr = arrays.flat(1)
+    let arr1 = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!arr1.includes(arr[i])) {
+        arr1.push(arr[i])
+      }
+    }
+    return arr1
+  },
+
+  unionBy: function (...arrays) {
+    var arr = [].concat(...arrays)
+    var iteratee = arr.pop()
+    var map = []
+    var result = []
+    if (typeof iteratee == 'function') {
+      for (var item of arr) {
+        if (!map.includes(iteratee(item))) {
+          map.push(iteratee(item))
+          result.push(item)
+        }
+      }
+      return result
+    }
+    if (typeof iteratee == 'string') {
+      for (var item of arr) {
+        if (!map.includes(item[iteratee])) {
+          map.push(item[iteratee])
+          result.push(item)
+        }
+      }
+      return result
+    }
+
+  },
+
+  unionWith: function (...arrays) {
+    let iteratee = arrays.pop()
+    let newarr = []
+    arrays.forEach(arr => newarr.push(...arr))
+
+    return uniqWith(newarr, iteratee)
+  },
+
+  uniq: function (array) {
+    let arr = []
+    for (let i = 0; i < array.length; i++) {
+      if (!arr.includes(array[i])) {
+        arr.push(array[i])
+      }
+
+    }
+    return arr
+  },
+
+  uniqBy: function (array, iteratee) {
+    var result = []
+    var arr = []
+    if (typeof iteratee == 'string') {
+      for (var item of array) {
+        if (!arr.includes(item[iteratee])) {
+          arr.push(item[iteratee])
+          result.push(item)
+        }
+      }
+      return result
+    }
+    if (typeof iteratee == 'function') {
+      for (var item of array) {
+        if (!arr.includes(iteratee(item))) {
+          arr.push(iteratee(item))
+          result.push(item)
+        }
+      }
+      return result
+    }
+  },
+
+  uniqWith: function (array, comparator) {
+    let arr = []
+    for (let it of array) {
+      for (const ite of array) {
+        if (comparator(array[it]) == comparator(array[ite])) {
+          arr.push[array[it]]
+        }
+      }
+    }
+    return arr
+  },
+
+  zip: function (...array) {
+    let arr = []
+    let arr1 = []
+    let arr2 = []
+    arr = array.flat(2)
+    for (let i = 0; i < arr.length; i + 2) {
+      arr1.push(arr[i])
+    }
+    for (let i = 1; i < arr.length; i + 2) {
+      arr2.push(arr[i])
+    }
+    let arr3 = []
+    arr3.push(arr1, arr2)
+    return arr3
+  },
+
+  unzip: function (array) {
+    let arr = []
+    let arr1 = []
+    let arr2 = []
+    let arr3 = []
+    arr = array.flat(2)
+    for (let i = 0; i < arr.length; i + 3) {
+      arr1.push(arr[i])
+    }
+    for (let i = 1; i < arr.length; i + 3) {
+      arr2.push(arr[i])
+    }
+    for (let i = 2; i < arr.length; i + 3) {
+      arr3.push(arr[i])
+    }
+    let arr4 = []
+    arr4.push(arr1, arr2, arr3)
+    return arr4
+  },
+
+  unzipWith: function (array, iteratee = _.identity) {
+    let arr = array.flat(2)
+    for (let i = 0; i < arr.length; i++) {
+      let index0 = iteratee(arr[i] + arr[i + 3])
+    }
+    for (let i = 1; i < arr.length; i++) {
+      let index1 = iteratee(arr[i] + arr[i + 3])
+    }
+    for (let i = 2; i < arr.length; i++) {
+      let index2 = iteratee(arr[i] + arr[i + 3])
+    }
+    let arr1 = []
+    arr1.push(index0, index1, index2)
+    return arr1
+  },
+
+  without: function (array, ...values) {
+    let arr = []
+    arr = values.flat(1)
+    let arr1 = []
+    for (let i = 0; i < array.length; i++) {
+      if (!arr.includes(array[i])) {
+        arr1.push(array[i])
+      }
+
+    }
+    return arr1
   }
 
 }
+
+
