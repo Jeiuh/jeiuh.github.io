@@ -422,10 +422,10 @@ var jeiuh = {
     let arr1 = []
     let arr2 = []
     arr = array.flat(2)
-    for (let i = 0; i < arr.length; i + 2) {
+    for (let i = 0; i < arr.length; i += 2) {
       arr1.push(arr[i])
     }
-    for (let i = 1; i < arr.length; i + 2) {
+    for (let i = 1; i < arr.length; i += 2) {
       arr2.push(arr[i])
     }
     let arr3 = []
@@ -439,13 +439,13 @@ var jeiuh = {
     let arr2 = []
     let arr3 = []
     arr = array.flat(2)
-    for (let i = 0; i < arr.length; i + 3) {
+    for (let i = 0; i < arr.length; i += 3) {
       arr1.push(arr[i])
     }
-    for (let i = 1; i < arr.length; i + 3) {
+    for (let i = 1; i < arr.length; i += 3) {
       arr2.push(arr[i])
     }
-    for (let i = 2; i < arr.length; i + 3) {
+    for (let i = 2; i < arr.length; i += 3) {
       arr3.push(arr[i])
     }
     let arr4 = []
@@ -480,8 +480,25 @@ var jeiuh = {
 
     }
     return arr1
+  },
+
+  xor: function (...arrays) {
+    let arr = arrays.flat(1)
+    arr.sort()
+    let arr1 = []
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] == arr[i + 1]) {
+        arr1.push(arr[i])
+      }
+
+    }
+    let arr2 = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!arr1.includes(arr[i])) {
+        arr2.push(arr[i])
+      }
+    }
+    return arr2
   }
 
 }
-
-
