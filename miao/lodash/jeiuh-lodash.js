@@ -80,6 +80,22 @@ var jeiuh = {
   },
 
   dropRightWhile: function (ary, predicate) {
+    function interatee(predicate) {
+      if (typeof predicate === 'functnon') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    predicate = interatee(predicate)
     var ary1 = ary.reverse()
     var ary3 = []
     for (let i = 0; i < ary1.length; i++) {
@@ -499,6 +515,145 @@ var jeiuh = {
       }
     }
     return arr2
+  },
+
+  property: function (path) {
+    var names = path.split('.')
+    return function (obj) {
+      for (var name of names) {
+        if (name in obj) {
+          obj = obj[name]
+        } else {
+          return
+        }
+      }
+      return obj
+    }
+  },
+
+  get: function (object, path, defaultValue) {
+    var names = path.split('.')
+
+    for (var name of names) {
+      if (name in Object(object)) {
+        object = object[name]
+      } else {
+        return defaultValue
+      }
+    }
+    return object
+
+  },
+
+  isMatch: function (object, source) {
+    for (const key in obj) {
+      if (obj[key !== src[key]]) {
+        const element = object[key];
+        return false
+      }
+    }
+    return true
+  },
+
+  bind: function (f, thisArg, ...partials) {
+    return function (...args) {
+      var copy = partials.slice()
+      for (var i = 0; i < copy.length; i++) {
+        if (copy[i] === window) {
+          copy[i] = args.shift()
+        }
+      }
+      return f.call(thisArg, ...copy, ...args)
+    }
+  },
+
+  ary: function (func, n = func.length) {
+    return function (...args) {
+      return func(...args.slice(0, n))
+    }
+  },
+
+  before: function (n, func) {
+    let q = 0
+    let result
+    return function (...args) {
+      if (q < n) {
+        return result = func.call(thsi, ...args)
+        q++
+      } else {
+        return result
+      }
+    }
+  },
+
+  after: function (n, func) {
+    var q = 0
+    return function (...args) {
+      q++
+      if (q > n) {
+        return func.call(thsi, ...args)
+      }
+    }
+  },
+
+  flip: function (func) {
+    return function (...args) {
+      return func(args.reverse())
+    }
+  },
+
+  negate: function (predicate) {
+    return function (...args) {
+      return !predicate(...args)
+    }
+  },
+
+  spread: function (func, start = 0) {
+    return function (ary) {
+      return func.apply(this, ary)
+    }
+  },
+
+  zipObject: function (props = [], values = []) {
+    let obj = {}
+    let arr = []
+    arr = props.concat(values)
+    for (let i = 0; i < arr.length; i++) {
+      if (i !== arr.length - 2) {
+        obj[arr[i]] = arr[i + 2]
+      } else {
+        break
+      }
+    }
+    return obj
+  },
+
+  countBy: function (collection, iteratee = _.identity) {
+    function interatee(predicate) {
+      if (typeof predicate === 'functnon') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+    predicate = iteratee(predicate)
+    let obj = {}
+    for (let item of collection) {
+      let newitem = predicate(item)
+      if (obj[newitem]) {
+        obj[newitem] += 1
+      } else {
+        obj[newitem] = 1
+      }
+    }
+    return obj
   }
 
 }
