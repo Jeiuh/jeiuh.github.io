@@ -629,7 +629,7 @@ var jeiuh = {
   },
 
   countBy: function (collection, iteratee = _.identity) {
-    function interatee(predicate) {
+    function iteratee(predicate) {
       if (typeof predicate === 'functnon') {
         return predicate
       }
