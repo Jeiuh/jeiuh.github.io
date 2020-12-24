@@ -628,7 +628,7 @@ var jeiuh = {
     return obj
   },
 
-  countBy: function (collection, iteratee = _.identity) {
+  countBy: function (collection, predicate = _.identity) {
     function iteratee(predicate) {
       if (typeof predicate === 'functnon') {
         return predicate
@@ -643,6 +643,7 @@ var jeiuh = {
         return _.matches(predicate)
       }
     }
+
     predicate = iteratee(predicate)
     let obj = {}
     for (let item of collection) {
@@ -654,6 +655,146 @@ var jeiuh = {
       }
     }
     return obj
-  }
+  },
 
+  every: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'functnon') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    predicate = iteratee(predicate)
+
+    if (Array.isArray(collection)) {
+      for (let item of collection) {
+        if (predicate(item)) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+    if (typeof collection === 'object') {
+      for (let key in object) {
+        if (predicate(collection[key])) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+  },
+
+  filter: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'functnon') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    predicate = iteratee(predicate)
+
+    if (Array.isArray(collection)) {
+      let arr = []
+      for (let item of collection) {
+        if (predicate(item)) {
+          arr.push(collection[i])
+        }
+        return arr
+      }
+    }
+    if (typeof collection === 'object') {
+      let obj = {}
+      for (let key in object) {
+        if (predicate(collection[key])) {
+          obj[key] = collection[key]
+        }
+        return obj
+      }
+    }
+  },
+
+  find: function (collection, predicate = _.identity, fromIndex = 0) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'functnon') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    predicate = iteratee(predicate)
+
+    if (Array.isArray(collection)) {
+      for (let item of collection) {
+        let one = 0
+        if (predicate(item)) {
+          one = item
+          break
+        }
+        return one
+      }
+    }
+    if (typeof collection === 'object') {
+      for (let key in object) {
+        let one = 0
+        if (predicate(collection[key])) {
+          one = collection[key]
+          break
+        }
+        return one
+      }
+    }
+  },
+
+  findLast: function (ary, predicate, fromIndex = ary.length - 1) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'functnon') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    predicate = iteratee(predicate);
+
+    for (let i = fromIndex; i >= 0; i--) {
+      if (predicate(ary[i], i, ary)) return ary[i];
+    }
+    return;
+  }
+  
 }
