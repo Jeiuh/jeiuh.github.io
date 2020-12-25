@@ -81,7 +81,7 @@ var jeiuh = {
 
   dropRightWhile: function (ary, predicate) {
     function interatee(predicate) {
-      if (typeof predicate === 'functnon') {
+      if (typeof predicate === 'function') {
         return predicate
       }
       if (typeof predicate === 'string') {
@@ -95,11 +95,12 @@ var jeiuh = {
       }
     }
 
-    predicate = interatee(predicate)
+    newPredicate = interatee(predicate)
+
     var ary1 = ary.reverse()
     var ary3 = []
     for (let i = 0; i < ary1.length; i++) {
-      if (!predicate(ary1[i])) {
+      if (!newPredicate(ary1[i])) {
         ary3 = ary1.slice(i)
         break
       }
@@ -630,7 +631,7 @@ var jeiuh = {
 
   countBy: function (collection, predicate = _.identity) {
     function iteratee(predicate) {
-      if (typeof predicate === 'functnon') {
+      if (typeof predicate === 'function') {
         return predicate
       }
       if (typeof predicate === 'string') {
@@ -659,7 +660,7 @@ var jeiuh = {
 
   every: function (collection, predicate = _.identity) {
     function iteratee(predicate) {
-      if (typeof predicate === 'functnon') {
+      if (typeof predicate === 'function') {
         return predicate
       }
       if (typeof predicate === 'string') {
@@ -697,7 +698,7 @@ var jeiuh = {
 
   filter: function (collection, predicate = _.identity) {
     function iteratee(predicate) {
-      if (typeof predicate === 'functnon') {
+      if (typeof predicate === 'function') {
         return predicate
       }
       if (typeof predicate === 'string') {
@@ -735,7 +736,7 @@ var jeiuh = {
 
   find: function (collection, predicate = _.identity, fromIndex = 0) {
     function iteratee(predicate) {
-      if (typeof predicate === 'functnon') {
+      if (typeof predicate === 'function') {
         return predicate
       }
       if (typeof predicate === 'string') {
@@ -775,7 +776,7 @@ var jeiuh = {
 
   findLast: function (ary, predicate, fromIndex = ary.length - 1) {
     function iteratee(predicate) {
-      if (typeof predicate === 'functnon') {
+      if (typeof predicate === 'function') {
         return predicate
       }
       if (typeof predicate === 'string') {
@@ -805,6 +806,31 @@ var jeiuh = {
         return func(args)
       }
     }
+  },
+
+  flatMap: function (collection, iteratee = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate);
+
+    var newArr = []
+    for (let item of collection) {
+      newArr.push(newPredicate(item))
+    }
+    return newArr
   }
-  
+
 }
