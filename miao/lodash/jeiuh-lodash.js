@@ -644,10 +644,10 @@ var jeiuh = {
       }
     }
 
-    predicate = iteratee(predicate)
+    var newPredicate = iteratee(predicate)
     let obj = {}
     for (let item of collection) {
-      let newitem = predicate(item)
+      let newitem = newPredicate(item)
       if (obj[newitem]) {
         obj[newitem] += 1
       } else {
@@ -673,11 +673,11 @@ var jeiuh = {
       }
     }
 
-    predicate = iteratee(predicate)
+    var newPredicate = iteratee(predicate)
 
     if (Array.isArray(collection)) {
       for (let item of collection) {
-        if (predicate(item)) {
+        if (newPredicate(item)) {
           return true
         } else {
           return false
@@ -686,7 +686,7 @@ var jeiuh = {
     }
     if (typeof collection === 'object') {
       for (let key in object) {
-        if (predicate(collection[key])) {
+        if (newPredicate(collection[key])) {
           return true
         } else {
           return false
@@ -711,12 +711,12 @@ var jeiuh = {
       }
     }
 
-    predicate = iteratee(predicate)
+    var newPredicate = iteratee(predicate)
 
     if (Array.isArray(collection)) {
       let arr = []
       for (let item of collection) {
-        if (predicate(item)) {
+        if (newPredicate(item)) {
           arr.push(collection[i])
         }
         return arr
@@ -725,7 +725,7 @@ var jeiuh = {
     if (typeof collection === 'object') {
       let obj = {}
       for (let key in object) {
-        if (predicate(collection[key])) {
+        if (newPredicate(collection[key])) {
           obj[key] = collection[key]
         }
         return obj
@@ -749,12 +749,12 @@ var jeiuh = {
       }
     }
 
-    predicate = iteratee(predicate)
+    var newPredicate = iteratee(predicate)
 
     if (Array.isArray(collection)) {
       for (let item of collection) {
         let one = 0
-        if (predicate(item)) {
+        if (newPredicate(item)) {
           one = item
           break
         }
@@ -764,7 +764,7 @@ var jeiuh = {
     if (typeof collection === 'object') {
       for (let key in object) {
         let one = 0
-        if (predicate(collection[key])) {
+        if (newPredicate(collection[key])) {
           one = collection[key]
           break
         }
@@ -789,12 +789,22 @@ var jeiuh = {
       }
     }
 
-    predicate = iteratee(predicate);
+    var newPredicate = iteratee(predicate);
 
     for (let i = fromIndex; i >= 0; i--) {
-      if (predicate(ary[i], i, ary)) return ary[i];
+      if (newPredicate(ary[i], i, ary)) return ary[i];
     }
     return;
+  },
+
+  curry: function (func, arity = func.length) {
+    return function (...args) {
+      if (args.length < arity) {
+        return curry(func.blind(null, args), length - func.length)
+      } else {
+        return func(args)
+      }
+    }
   }
   
 }
