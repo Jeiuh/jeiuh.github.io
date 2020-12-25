@@ -763,7 +763,7 @@ var jeiuh = {
       }
     }
     if (typeof collection === 'object') {
-      for (let key in object) {
+      for (let key in collection) {
         let one = 0
         if (newPredicate(collection[key])) {
           one = collection[key]
@@ -808,7 +808,7 @@ var jeiuh = {
     }
   },
 
-  flatMap: function (collection, iteratee = _.identity) {
+  flatMap: function (collection, predicate = _.identity) {
     function iteratee(predicate) {
       if (typeof predicate === 'function') {
         return predicate
@@ -831,6 +831,100 @@ var jeiuh = {
       newArr.push(newPredicate(item))
     }
     return newArr
+  },
+
+  flatMapDeep: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate);
+
+    var newArr = []
+    for (let item of collection) {
+      newArr.push(newPredicate(item))
+    }
+    return newArr.flat(Infinity)
+  },
+
+  flatMapDepth: function (collection, predicate = _.identity, depth = 1) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate);
+
+    var newArr = []
+    for (let item of collection) {
+      newArr.push(newPredicate(item))
+    }
+    return newArr.flat(depth)
+  },
+
+  forEach: function (collection, predicate = _.identity) {
+    if (Array.isArray(collection)) {
+      for (let item of collection) {
+        predicate(item)
+      }
+      return collection
+    }
+    if (typeof collection === 'object') {
+      for (let key in collection) {
+        predicate(key, collection[key])
+      }
+      return collection
+    }
+  },
+
+  forEachRight: function (collection, predicate = _.identity) {
+    if (Array.isArray(collection)) {
+      newCollection = collection.reverse()
+      for (let item of newCollection) {
+        predicate(item)
+      }
+      return collection
+    }
+    if (typeof collection === 'object') {
+      var arrKey = Object.keys(collection)
+      var arrValue = Object.values(collection)
+      var re_arrKey = arrKey.reverse()
+      var re_arrValue = arrValue.reverse()
+      newObj = {}
+      for (let key of re_arrKey) {
+        newObj[key] = true
+      }
+      for (let key in newObj) {
+        if (!re_arrValue.includes(newObj[key])) {
+          newObj[key] = re_arrValue.shift()
+        }
+      }
+      for (let key in newObj) {
+        predicate(key, newObj[key])
+      }
+      return newObj
+    }
   }
 
 }
