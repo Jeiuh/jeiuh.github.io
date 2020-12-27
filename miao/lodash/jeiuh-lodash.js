@@ -45,14 +45,31 @@ var jeiuh = {
     return ary
   },
 
-  differenceBy: function (ary, ary1, iteratee) {
+  differenceBy: function (ary, ary1, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
     var ary2 = []
     var ary3 = []
     for (let i = 0; i < ary.length; i++) {
-      ary2.push(iteratee(ary[i]))
+      ary2.push(newPredicate(ary[i]))
     }
     for (let i = 0; i < ary1.length; i++) {
-      ary3.push(iteratee(ary1[i]))
+      ary3.push(newPredicate(ary1[i]))
     }
 
     for (let i = 0; i < ary2.length; i++) {
@@ -110,7 +127,7 @@ var jeiuh = {
     return ary2
   },
 
-  dropWhile: function (ary, predicate) {
+  dropWhile: function (ary, predicate = _.identity) {
     for (let i = 0; i < ary.length; i++) {
       if (!predicate(ary[i])) {
         ary1 = ary.slice(i)
@@ -323,9 +340,26 @@ var jeiuh = {
   },
 
   takeRightWhile: function (array, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
     let arr = []
-    for (let i = array.length - 1; i >= 0; i--) {
-      if (predicate(ary[i]), index, array)
+    for (let i = ary.length - 1; i >= 0; i--) {
+      if (newPredicate(ary[i]), index, array)
         arr.unshift(ary[i])
       else
         return arr
@@ -423,15 +457,13 @@ var jeiuh = {
   },
 
   uniqWith: function (array, comparator) {
-    let arr = []
-    for (let it of array) {
-      for (const ite of array) {
-        if (comparator(array[it]) == comparator(array[ite])) {
-          arr.push[array[it]]
-        }
+    let result = []
+    for (let item of array) {
+      if (result.every(element => !comparator(element, item))) {
+        result.push(item)
       }
     }
-    return arr
+    return result
   },
 
   zip: function (...array) {
@@ -645,7 +677,8 @@ var jeiuh = {
       }
     }
 
-    var newPredicate = iteratee(predicate)
+    newPredicate = iteratee(predicate)
+
     let obj = {}
     for (let item of collection) {
       let newitem = newPredicate(item)
@@ -674,13 +707,11 @@ var jeiuh = {
       }
     }
 
-    var newPredicate = iteratee(predicate)
+    newPredicate = iteratee(predicate)
 
     if (Array.isArray(collection)) {
       for (let item of collection) {
         if (newPredicate(item)) {
-          return true
-        } else {
           return false
         }
       }
@@ -688,8 +719,6 @@ var jeiuh = {
     if (typeof collection === 'object') {
       for (let key in object) {
         if (newPredicate(collection[key])) {
-          return true
-        } else {
           return false
         }
       }
@@ -712,16 +741,16 @@ var jeiuh = {
       }
     }
 
-    var newPredicate = iteratee(predicate)
+    newPredicate = iteratee(predicate)
 
     if (Array.isArray(collection)) {
       let arr = []
       for (let item of collection) {
         if (newPredicate(item)) {
-          arr.push(collection[i])
+          arr.push(item)
         }
-        return arr
       }
+      return arr
     }
     if (typeof collection === 'object') {
       let obj = {}
@@ -729,8 +758,8 @@ var jeiuh = {
         if (newPredicate(collection[key])) {
           obj[key] = collection[key]
         }
-        return obj
       }
+      return obj
     }
   },
 
@@ -750,26 +779,20 @@ var jeiuh = {
       }
     }
 
-    var newPredicate = iteratee(predicate)
+    newPredicate = iteratee(predicate)
 
     if (Array.isArray(collection)) {
       for (let item of collection) {
-        let one = 0
         if (newPredicate(item)) {
-          one = item
-          break
+          return item
         }
-        return one
       }
     }
     if (typeof collection === 'object') {
       for (let key in collection) {
-        let one = 0
         if (newPredicate(collection[key])) {
-          one = collection[key]
-          break
+          return collection[key]
         }
-        return one
       }
     }
   },
@@ -790,7 +813,7 @@ var jeiuh = {
       }
     }
 
-    var newPredicate = iteratee(predicate);
+    newPredicate = iteratee(predicate);
 
     for (let i = fromIndex; i >= 0; i--) {
       if (newPredicate(ary[i], i, ary)) return ary[i];
@@ -830,7 +853,7 @@ var jeiuh = {
     for (let item of collection) {
       newArr.push(newPredicate(item))
     }
-    return newArr
+    return newArr.flat(Infinity)
   },
 
   flatMapDeep: function (collection, predicate = _.identity) {
@@ -849,7 +872,7 @@ var jeiuh = {
       }
     }
 
-    var newPredicate = iteratee(predicate);
+    newPredicate = iteratee(predicate)
 
     var newArr = []
     for (let item of collection) {
@@ -874,7 +897,7 @@ var jeiuh = {
       }
     }
 
-    var newPredicate = iteratee(predicate);
+    var newPredicate = iteratee(predicate)
 
     var newArr = []
     for (let item of collection) {
@@ -925,6 +948,483 @@ var jeiuh = {
       }
       return newObj
     }
+  },
+
+  groupBy: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
+    let obj = {}
+    for (let item of collection) {
+      obj[newPredicate(item)] = []
+    }
+    for (let iterator of collection) {
+      if (newPredicate(iterator) in obj) {
+        obj[newPredicate(iterator)].push(iterator)
+      }
+    }
+    return obj
+  },
+
+  includes: function (collection, value, fromIndex = 0) {
+    if (typeof collection === 'string') {
+      if (collection.includes(value)) {
+        return true
+      } else {
+        return false
+      }
+    }
+    if (Array.isArray(collection)) {
+      if (collection.includes(value, fromIndex)) {
+        return true
+      } else {
+        return false
+      }
+    }
+    if (typeof collection === 'object') {
+      for (let key in collection) {
+        if (collection[key] == value) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+  },
+
+  keyBy: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    newPredicate = iteratee(predicate)
+
+    let object = {}
+    for (let i = 0; i < collection.length; i++) {
+      object[newPredicate(collection[i])] = collection[i]
+    }
+    return object
+  },
+
+  map: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    newPredicate = iteratee(predicate)
+
+    if (Array.isArray(collection)) {
+      let array = []
+      for (let item of collection) {
+        array.push(newPredicate(item))
+      }
+      return array
+    }
+
+    if (typeof collection === 'object') {
+      let array = []
+      for (let key in collection) {
+        array.push(newPredicate(collection[key]))
+      }
+      return array
+    }
+  },
+
+  partition: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    newPredicate = iteratee(predicate)
+    let array1 = []
+    let array2 = []
+    let array3 = []
+    for (let item of collection) {
+      if (newPredicate(item)) {
+        array1.push(item)
+      } else {
+        array2.push(item)
+      }
+    }
+    array3[0] = array1
+    array3[1] = array2
+    return array3
+  },
+
+  reduce: function (collection, iteratee = _.identity, accumulator) {
+    for (let key in collection) {
+      if (accumulator == undefined) {
+        accumulator = collection[key]
+      }
+      accumulator = iteratee(accumulator, value, key)
+    }
+    return accumulator
+  },
+
+  reduceRight: function (collection, iteratee = _.identity, accumulator) {
+    for (let i = collection.length - 1; i >= 0; i--) {
+      if (accumulator == undefined) {
+        accumulator = collection[i]
+      }
+      accumulator = iteratee(accumulator, value, key)
+    }
+    return accumulator
+  },
+
+  reject: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    newPredicate = iteratee(predicate)
+
+    if (Array.isArray(collection)) {
+      let arr = []
+      for (let item of collection) {
+        if (!newPredicate(item)) {
+          arr.push(item)
+        }
+      }
+      return arr
+    }
+    if (typeof collection === 'object') {
+      let obj = {}
+      for (let key in object) {
+        if (!newPredicate(collection[key])) {
+          obj[key] = collection[key]
+        }
+      }
+      return obj
+    }
+  },
+
+  sample: function (collection) {
+    let item = collection[Math.floor(Math.random() * collection.length)]
+    return item
+  },
+
+  sampleSize: function (collection, n = 1) {
+    let i = 1
+    let array = []
+    while (i <= n) {
+      array.push(collection[Math.floor(Math.random() * collection.length)])
+      i++
+    }
+    return array
+  },
+
+  shuffle: function (collection) {
+    let i = 1
+    let array = []
+    while (i <= collection.length) {
+      let value = collection[Math.floor(Math.random() * collection.length)]
+      if (array.includes(value)) {
+        i--
+      } else {
+        array.push(value)
+        i++
+      }
+    }
+    return array
+  },
+
+  size: function (collection) {
+    if (typeof collection === 'string') {
+      return collection.length
+    }
+    if (Array.isArray(collection)) {
+      return collection.length
+    }
+    if (typeof collection === 'object') {
+      return Object.keys(obj).length
+    }
+  },
+
+  some: function (collection, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
+    if (Array.isArray(collection)) {
+      for (let item of collection) {
+        if (newPredicate(item)) {
+          return true
+        }
+      }
+      return false
+    }
+    if (typeof collection === 'object') {
+      for (let key in collection) {
+        if (newPredicate(collection[key])) {
+          return true
+        }
+      }
+      return false
+    }
+  },
+
+  defer: function (func, ...args) {
+    let times = setTimeout(func, 0, ...args);
+    return times - 1
+  },
+
+  castArray: function (value) {
+    let array = []
+    if (Array.isArray(value)) {
+      return value
+    } else {
+      array.push(value)
+      return array
+    }
+  },
+
+  conformsTo: function (object, source) {
+    for (let i in object) {
+      if (source[i] && !source[i](object[i])) {
+        return false;
+      }
+    }
+    return true;
+  },
+
+  eq: function (value, other) {
+    if (Number.isNaN(val) && Number.isNaN(other)) {
+      return true;
+    }
+    return value === other;
+  },
+
+  gt: function (value, other) {
+    if (value - other > 0) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  gte: function (value, other) {
+    if (value - other >= 0) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isArguments: function (value) {
+    if (Array.isArray(value)) {
+      return false
+    }
+    if (typeof value === 'object' && length in value) {
+      return true
+    }
+  },
+
+  isArray: function (value) {
+    if (Array.isArray(value)) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isArrayBuffer: function (value) {
+    if (Object.prototype.toString.call(value) === "[object ArrayBuffer]") {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isArrayLike: function (value) {
+    if (typeof value !== 'function' && value.length >= 0 && value.length <= Number.MAX_SAFE_INTEGER) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isArrayLikeObject: function (value) {
+    if (typeof value !== 'function' && typeof value == "object" && value.length >= 0 && value.length <= Number.MAX_SAFE_INTEGER) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isBoolean: function (value) {
+    if (Object.prototype.toString.call(value) === "[object Boolean]") {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isDate: function (value) {
+    if (Object.prototype.toString.call(value) === "[object Date]") {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isElement: function (value) {
+    if (Object.prototype.toString.call(value) === "[object HTMLBodyElement]") {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isEmpty: function (value) {
+    for (let key in value) {
+      return false
+    }
+    return true
+  },
+
+  isEqual: function (value, other) {
+    if (Object.prototype.toString.call(value) === Object.prototype.toString.call(other)) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isEqualWith: function (value, other, customizer) {
+    if (Object.prototype.toString.call(customizer(value)) === Object.prototype.toString.call(customizer(other))) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isError: function (value) {
+    if (Object.prototype.toString.call(value) === "[object Error]") {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isFinite: function (value) {
+    if (Object.prototype.toString.call(value) === "[object Number]") {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isFunction: function (value) {
+    if (typeof value === 'function') {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isInteger: function (value) {
+    if (typeof value === "number" && Math.floor(value) === value) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isLength: function (value) {
+    let val = value
+    if (val.lenght) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isMap: function (value) {
+    if (Object.prototype.toString.call(value) === "[object Map]") {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isMatch: function (object, source) {
+    for (let key in object) {
+      if (object[key] == source[key]) {
+        return true
+      }
+    }
+    return false
   }
 
 }
