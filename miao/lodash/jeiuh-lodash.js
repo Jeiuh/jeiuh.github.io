@@ -358,9 +358,9 @@ var jeiuh = {
     var newPredicate = iteratee(predicate)
 
     let arr = []
-    for (let i = ary.length - 1; i >= 0; i--) {
-      if (newPredicate(ary[i]), index, array)
-        arr.unshift(ary[i])
+    for (let i = array.length - 1; i >= 0; i--) {
+      if (newPredicate(array[i]), index, array)
+        arr.unshift(array[i])
       else
         return arr
     }
@@ -369,8 +369,8 @@ var jeiuh = {
   takeWhile: function (array, predicate = _.identity) {
     let arr = []
     for (let i = 0; i < array.length; i++) {
-      if (predicate(ary[i]), index, array)
-        arr.unshift(ary[i])
+      if (predicate(array[i]), index, array)
+        arr.unshift(array[i])
       else
         return arr
     }
@@ -414,12 +414,17 @@ var jeiuh = {
 
   },
 
-  unionWith: function (...arrays) {
-    let iteratee = arrays.pop()
-    let newarr = []
-    arrays.forEach(arr => newarr.push(...arr))
-
-    return uniqWith(newarr, iteratee)
+  unionWith: function (arrays, comparator) {
+    let arr0 = arrays[0]
+    let arr1 = arrays[1]
+    arr1.forEach((item) => {
+      for (let ite of arr0) {
+        if (comparator(item, ite)) {
+          arr0.push(item)
+        }
+      }
+      return arr0
+    })
   },
 
   uniq: function (array) {
@@ -503,19 +508,14 @@ var jeiuh = {
   },
 
   unzipWith: function (array, iteratee = _.identity) {
-    let arr = array.flat(2)
-    for (let i = 0; i < arr.length; i++) {
-      let index0 = iteratee(arr[i] + arr[i + 3])
+    let arrs = array.flat(2)
+    let newArray = []
+    for (let i = 0; i < arrs.length; i++) {
+      if (i < arrs.length / 2) {
+        newArray.push(iteratee(arrs[i], arrs[i + 3]))
+      }
     }
-    for (let i = 1; i < arr.length; i++) {
-      let index1 = iteratee(arr[i] + arr[i + 3])
-    }
-    for (let i = 2; i < arr.length; i++) {
-      let index2 = iteratee(arr[i] + arr[i + 3])
-    }
-    let arr1 = []
-    arr1.push(index0, index1, index2)
-    return arr1
+    return newArray
   },
 
   without: function (array, ...values) {
