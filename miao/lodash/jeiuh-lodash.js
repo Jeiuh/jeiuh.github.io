@@ -45,7 +45,7 @@ var jeiuh = {
     return ary
   },
 
-  differenceBy: function (ary, ary1, predicate = _.identity) {
+  differenceBy: function (array, values, predicate = _.identity) {
     function iteratee(predicate) {
       if (typeof predicate === 'function') {
         return predicate
@@ -63,24 +63,13 @@ var jeiuh = {
 
     var newPredicate = iteratee(predicate)
 
-    var ary2 = []
-    var ary3 = []
-    for (let i = 0; i < ary.length; i++) {
-      ary2.push(newPredicate(ary[i]))
-    }
-    for (let i = 0; i < ary1.length; i++) {
-      ary3.push(newPredicate(ary1[i]))
-    }
-
-    for (let i = 0; i < ary2.length; i++) {
-      for (let j = 0; j < ary3.length; j++) {
-        if (ary2[i] == ary3[j]) {
-          ary2.splice(i, 1)
-        }
+    let newArray = array.filter(item => {
+      var newVal = values.map(value => newPredicate(value))
+      if (!newVal.includes(newPredicate(item))) {
+        return true
       }
-
-    }
-    return ary2
+    })
+    return newArray
   },
 
   differenceWith: function (ary, ary1, comparator) {
