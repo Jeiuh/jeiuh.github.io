@@ -265,7 +265,7 @@ var jeiuh = {
     return ary;
   },
 
-  intersectionBy: function (predicate = _.identity, ...arrays) {
+  intersectionBy: function (objects, others, predicate = _.identity) {
     function iteratee(predicate) {
       if (typeof predicate === 'function') {
         return predicate
@@ -283,7 +283,7 @@ var jeiuh = {
 
     var newPredicate = iteratee(predicate)
 
-    let flatArrays = arrays.flat()
+    let flatArrays = objects.concat(others)
     let copyArrays = flatArrays
     let testArray = []
     for (let i = 0; i < copyArrays.length; i++) {
@@ -298,7 +298,7 @@ var jeiuh = {
   intersectionWith: function (arrays, others, comparator) {
     let testArray = []
     for (let arraysItem of arrays) {
-      for (let othersItem of object) {
+      for (let othersItem of others) {
         if (comparator(arraysItem, othersItem)) {
           testArray, push(arraysItem)
         }
@@ -494,6 +494,49 @@ var jeiuh = {
     return -1
   },
 
+  sortedLastIndexBy: function (array, value, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
+    let newArray = array.map(item => newPredicate(item))
+    let newValue = [value].map(item => newPredicate(item))
+    for (let i = 0; i < newArray.length; i++) {
+      if (newValue[0] >= newArray[i]) {
+        return i + 1
+      }
+
+    }
+  },
+
+  sortedLastIndexOf: function (array, value) {
+    var first = 0
+    var last = array.length - 1
+    while (first < last) {
+      var middle = Math.floor((first + last) / 2)
+      if (array[middle] == value) {
+        return middle + 1
+      } else if (array[middle] < value) {
+        first = middle + 1
+      } else {
+        last = middle - 1
+      }
+    }
+  },
+
   sortedUniq: function (array) {
     let arr = []
     for (let iterator of array) {
@@ -549,23 +592,42 @@ var jeiuh = {
 
     var newPredicate = iteratee(predicate)
 
-    let arr = []
-    for (let i = array.length - 1; i >= 0; i--) {
-      if (newPredicate(array[i]), index, array)
-        arr.unshift(array[i])
-      else
-        return arr
+    let newArray = []
+    if (!array.length) {
+      return []
     }
+    for (let i = 0; i < array.length; i++) {
+      if (newPredicate(array[i])) {
+        newArray.push(array[i])
+      }
+    }
+    return newArray
   },
 
   takeWhile: function (array, predicate = _.identity) {
-    let arr = []
-    for (let i = 0; i < array.length; i++) {
-      if (predicate(array[i]), index, array)
-        arr.unshift(array[i])
-      else
-        return arr
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
     }
+
+    var newPredicate = iteratee(predicate)
+
+    let newArray = []
+    for (let i = 0; i < array.length; i++) {
+      if (newPredicate(array[i]))
+        newArray.push(array[i])
+    }
+    return newArray
   },
 
   union: function (...arrays) {
@@ -606,17 +668,15 @@ var jeiuh = {
 
   },
 
-  unionWith: function (arrays, comparator) {
-    let arr0 = arrays[0]
-    let arr1 = arrays[1]
-    arr1.forEach((item) => {
-      for (let ite of arr0) {
-        if (comparator(item, ite)) {
-          arr0.push(item)
+  unionWith: function (objects, others, comparator) {
+    for (let object of objects) {
+      for (let other of others) {
+        if (!comparator(object, other)) {
+          objects.push(other)
         }
       }
-      return arr0
-    })
+    }
+    return objects
   },
 
   uniq: function (array) {
@@ -740,6 +800,59 @@ var jeiuh = {
       }
     }
     return arr2
+  },
+
+  xorBy: function (objects, others, predicate = _.identity,) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
+    let newObjects = objects.map(item => newPredicate(item))
+    let newOthers = others.map(item => newPredicate(item))
+    let newArray = []
+    for (let i = 0; i < newObjects.length; i++) {
+      if (!newOthers.includes(newObjects[i])) {
+        newArray.push(objects[i])
+      }
+    }
+    for (let i = 0; i < newOthers.length; i++) {
+      if (!newObjects.includes(newOthers[i])) {
+        newArray.push(others[i])
+      }
+    }
+    return newArray
+  },
+
+  xorWith: function (objects, others, comparator) {
+    let array = objects
+    for (let i = 0; i < objects.length; i++) {
+      for (let j = 0; j < others.length; j++) {
+        if (comparator(objects[i], others[j])) {
+          array.splice(i, 1)
+        }
+      }
+    }
+    for (let i = 0; i < others.length; i++) {
+      for (let j = 0; j < objects.length; j++) {
+        if (!comparator(others[i], objects[j])) {
+          array.push(others[i])
+        }
+      }
+    }
+    return array
   },
 
   property: function (path) {
