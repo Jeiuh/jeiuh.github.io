@@ -85,7 +85,7 @@ var jeiuh = {
     return ary2
   },
 
-  dropRightWhile: function (ary, predicate) {
+  dropRightWhile: function (array, predicate = _.identity) {
     function interatee(predicate) {
       if (typeof predicate === 'function') {
         return predicate
@@ -103,28 +103,39 @@ var jeiuh = {
 
     newPredicate = interatee(predicate)
 
-    var ary1 = ary.reverse()
-    var ary3 = []
-    for (let i = 0; i < ary1.length; i++) {
-      if (!newPredicate(ary1[i])) {
-        ary3 = ary1.slice(i)
-        break
+    for (let i = 0; i < array.length; i++) {
+      if (newPredicate(array[i])) {
+        array.splice(i)
+        return
       }
-
     }
-    var ary2 = ary3.reverse()
-    return ary2
+    return array
   },
 
-  dropWhile: function (ary, predicate = _.identity) {
-    for (let i = 0; i < ary.length; i++) {
-      if (!predicate(ary[i])) {
-        ary1 = ary.slice(i)
-        break
+  dropWhile: function (array, predicate = _.identity) {
+    function interatee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
       }
-
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
     }
-    return ary1
+
+    newPredicate = interatee(predicate)
+    let copyArray = array.slice()
+    for (let i = 0; i < array.length; i++) {
+      if (newPredicate(array[i])) {
+        copyArray.splice(0, 1)
+      }
+    }
+    return copyArray
   },
 
   fill: function (ary, val, sta = 0, end = ary.length) {
@@ -288,7 +299,7 @@ var jeiuh = {
     let testArray = []
     for (let i = 0; i < copyArrays.length; i++) {
       if (testArray.indexOf(newPredicate(copyArrays[i])) > -1) {
-        return flatArrays[testArray.indexOf(newPredicate(copyArrays[i]))]
+        return [flatArrays[testArray.indexOf(newPredicate(copyArrays[i]))]]
       } else {
         testArray.push(newPredicate(copyArrays[i]))
       }
@@ -300,7 +311,7 @@ var jeiuh = {
     for (let arraysItem of arrays) {
       for (let othersItem of others) {
         if (comparator(arraysItem, othersItem)) {
-          testArray, push(arraysItem)
+          testArray.push(arraysItem)
         }
       }
       return testArray
@@ -395,7 +406,7 @@ var jeiuh = {
     let testArray = []
     for (let item of newArray) {
       if (!(newValues.indexOf(item) > -1)) {
-        testArray.push(array[newValues.indexOf(item)])
+        testArray.push(array[newArray.indexOf(item)])
       }
     }
     return testArray
@@ -409,8 +420,8 @@ var jeiuh = {
           testArray.push(arrayItrm)
         }
       }
-      return testArray
     }
+    return testArray
   },
 
   reverse: function (array) {
@@ -671,7 +682,7 @@ var jeiuh = {
   unionWith: function (objects, others, comparator) {
     for (let object of objects) {
       for (let other of others) {
-        if (!comparator(object, other)) {
+        if (!comparator(object, other) && JSON.stringify(objects).indexOf(JSON.stringify(other)) == -1) {
           objects.push(other)
         }
       }
@@ -837,7 +848,7 @@ var jeiuh = {
   },
 
   xorWith: function (objects, others, comparator) {
-    let array = objects
+    let array = objects.slice()
     for (let i = 0; i < objects.length; i++) {
       for (let j = 0; j < others.length; j++) {
         if (comparator(objects[i], others[j])) {
@@ -847,7 +858,7 @@ var jeiuh = {
     }
     for (let i = 0; i < others.length; i++) {
       for (let j = 0; j < objects.length; j++) {
-        if (!comparator(others[i], objects[j])) {
+        if (!comparator(others[i], objects[j]) && JSON.stringify(array).indexOf(JSON.stringify(others[i])) == -1 && JSON.stringify(objects).indexOf(JSON.stringify(others[i])) == -1) {
           array.push(others[i])
         }
       }
@@ -1020,6 +1031,7 @@ var jeiuh = {
           return false
         }
       }
+      return true
     }
     if (typeof collection === 'object') {
       for (let key in object) {
@@ -1027,6 +1039,7 @@ var jeiuh = {
           return false
         }
       }
+      return true
     }
   },
 
@@ -1380,7 +1393,19 @@ var jeiuh = {
         return _.property(predicate)
       }
       if (Array.isArray(predicate)) {
-        return _.matchesProperty(predicate)
+        let array1 = []
+        let array2 = []
+        let array3 = []
+        collection.map(item => {
+          if (_.matchesProperty(predicate[0], predicate[1])) {
+            array1.push(item)
+          } else {
+            array2.push(item)
+          }
+        })
+        array3[0] = array1
+        array3[1] = array2
+        return array3
       }
       if (typeof predicate === 'object') {
         return _.matches(predicate)
@@ -1408,7 +1433,7 @@ var jeiuh = {
       if (accumulator == undefined) {
         accumulator = collection[key]
       }
-      accumulator = iteratee(accumulator, value, key)
+      accumulator = iteratee(accumulator, collection[key], key)
     }
     return accumulator
   },
@@ -1418,7 +1443,7 @@ var jeiuh = {
       if (accumulator == undefined) {
         accumulator = collection[i]
       }
-      accumulator = iteratee(accumulator, value, key)
+      accumulator = iteratee(accumulator, collection[i], key)
     }
     return accumulator
   },
@@ -1432,7 +1457,13 @@ var jeiuh = {
         return _.property(predicate)
       }
       if (Array.isArray(predicate)) {
-        return _.matchesProperty(predicate)
+        let arr = []
+        collection.map(item => {
+          if (_.matchesProperty(predicate[0], predicate[1]) == false) {
+            arr.push(item)
+          }
+        })
+        return arr
       }
       if (typeof predicate === 'object') {
         return _.matches(predicate)
@@ -1469,7 +1500,7 @@ var jeiuh = {
   sampleSize: function (collection, n = 1) {
     let i = 1
     let array = []
-    while (i <= n) {
+    while (i <= collection.length) {
       array.push(collection[Math.floor(Math.random() * collection.length)])
       i++
     }
@@ -1482,7 +1513,7 @@ var jeiuh = {
     while (i <= collection.length) {
       let value = collection[Math.floor(Math.random() * collection.length)]
       if (array.includes(value)) {
-        i--
+        continue
       } else {
         array.push(value)
         i++
@@ -1499,7 +1530,7 @@ var jeiuh = {
       return collection.length
     }
     if (typeof collection === 'object') {
-      return Object.keys(obj).length
+      return Object.keys(collection).length
     }
   },
 
@@ -1512,7 +1543,12 @@ var jeiuh = {
         return _.property(predicate)
       }
       if (Array.isArray(predicate)) {
-        return _.matchesProperty(predicate)
+        collection.map(item => {
+          if (_.matchesProperty(predicate[0], predicate[1])) {
+            return true
+          }
+        })
+        return false
       }
       if (typeof predicate === 'object') {
         return _.matches(predicate)
@@ -1544,6 +1580,11 @@ var jeiuh = {
     return times - 1
   },
 
+  delay: function (func, wait, ...args) {
+    let timer = setTimeout(func, wait, ...args);
+    return timer - 1;
+  },
+
   castArray: function (value) {
     let array = []
     if (Array.isArray(value)) {
@@ -1564,7 +1605,7 @@ var jeiuh = {
   },
 
   eq: function (value, other) {
-    if (Number.isNaN(val) && Number.isNaN(other)) {
+    if (Number.isNaN(value) && Number.isNaN(other)) {
       return true;
     }
     return value === other;
@@ -1592,6 +1633,8 @@ var jeiuh = {
     }
     if (typeof value === 'object' && length in value) {
       return true
+    } else {
+      return false
     }
   },
 
@@ -1659,7 +1702,11 @@ var jeiuh = {
   },
 
   isEqual: function (value, other) {
-    if (Object.prototype.toString.call(value) === Object.prototype.toString.call(other)) {
+    if (typeof (value) == "number" && typeof (other) == "number" && value == other) {
+      return true
+    } else if (Object.prototype.toString.call(value) == "[object Object]" && Object.prototype.toString.call(other) == "[object Object]" && Object.getOwnPropertyNames(value).length == Object.getOwnPropertyNames(other).length) {
+      return true
+    } else if (typeof (value) != "number" && typeof (other) != "number" && Object.prototype.toString.call(value) === Object.prototype.toString.call(other)) {
       return true
     } else {
       return false
@@ -1683,7 +1730,7 @@ var jeiuh = {
   },
 
   isFinite: function (value) {
-    if (Object.prototype.toString.call(value) === "[object Number]") {
+    if (Object.prototype.toString.call(value) === "[object Number]" && value != Infinity) {
       return true
     } else {
       return false
@@ -1699,7 +1746,7 @@ var jeiuh = {
   },
 
   isInteger: function (value) {
-    if (typeof value === "number" && Math.floor(value) === value) {
+    if (typeof value === "number" && Math.floor(value) === value && value != Infinity) {
       return true
     } else {
       return false
@@ -1707,8 +1754,9 @@ var jeiuh = {
   },
 
   isLength: function (value) {
-    let val = value
-    if (val.lenght) {
+    if (Number.isInteger(value)) {
+      return true
+    } else if (value.length) {
       return true
     } else {
       return false
@@ -1725,11 +1773,414 @@ var jeiuh = {
 
   isMatch: function (object, source) {
     for (let key in object) {
-      if (object[key] == source[key]) {
+      if (JSON.stringify(object[key]) == JSON.stringify(source[key])) {
         return true
       }
     }
     return false
+  },
+
+  isMatchWith: function (object, source, [customizer]) {
+    for (let key in object) {
+      if (customizer(object[key], source[key])) {
+        return true
+      }
+    }
+    return false
+  },
+
+  isNaN: function (value) {
+    if (Object.prototype.toString.call(value) === "[object Number]") {
+      return true
+    }
+    return false
+  },
+
+  isNil: function (value) {
+    if (value === null || value === undefined) {
+      return true
+    }
+    return false
+  },
+
+  isNull: function (value) {
+    if (value === null) {
+      return true
+    }
+    return false
+  },
+
+  isNumber: function (value) {
+    if (typeof (value) == "number") {
+      return true
+    }
+    return false
+  },
+
+  isObject: function (value) {
+    if (typeof (value) == "object" || typeof (value) == "function") {
+      return true
+    }
+    return false
+  },
+
+  isObjectLike: function (value) {
+    if (typeof (value) == "object") {
+      return true
+    }
+    return false
+  },
+
+  isPlainObject: function (value) {
+    let proto = Object.getPrototypeOf(value);
+    return proto === Object.prototype || proto === null;
+  },
+
+  isRegExp: function (value) {
+    if (Object.prototype.toString.call(value) === "[object RegExp]") {
+      return true
+    }
+    return false
+  },
+
+  isSafeInteger: function (value) {
+    if (Number.isSafeInteger(value)) {
+      return true
+    }
+    return false
+  },
+
+  isSet: function (value) {
+    if (Object.prototype.toString.call(value) === "[object Set]") {
+      return true
+    }
+    return false
+  },
+
+  isString: function (value) {
+    if (Object.prototype.toString.call(value) === "[object String]") {
+      return true
+    }
+    return false
+  },
+
+  isSymbol: function (value) {
+    if (Object.prototype.toString.call(value) == "[object Symbol]") {
+      return true
+    }
+    return false
+  },
+
+  isTypedArray: function (value) {
+    if (Object.prototype.toString.call(value) == "[object Uint8Array]") {
+      return true
+    }
+    return false
+  },
+
+  isUndefined: function (value) {
+    if (value === undefined) {
+      return true
+    }
+    return false
+  },
+
+  isWeakMap: function (value) {
+    if (Object.prototype.toString.call(value) === "[object WeakMap]") {
+      return true
+    }
+    return false
+  },
+
+  lt: function (value, other) {
+    if (value < other) {
+      return true
+    }
+    return false
+  },
+
+  lte: function (value, other) {
+    if (value <= other) {
+      return true
+    }
+    return false
+  },
+
+  toArray: function (value) {
+    var result = [];
+    for (var key in value) {
+      result.push(value[key]);
+    }
+    return result;
+  },
+
+  toArray: function (value) {
+    if (typeof value === 'string' || typeof value === 'object') {
+      let array = []
+      for (let key in value) {
+        array.push(value[key])
+      }
+      return array
+    } else {
+      return []
+    }
+  },
+
+  toFinite: function (value) {
+    if (value > Number.MAX_VALUE) {
+      return 1.7976931348623157e+308
+    }
+    if (value < Number.MIN_VALUE) {
+      return 5e-324
+    }
+    if (isNaN(+value)) {
+      return 0
+    } else {
+      return +value
+    }
+  },
+
+  toInteger: function (value) {
+    if (value > Number.MAX_VALUE) {
+      return 1.7976931348623157e+308
+    }
+    if (value < Number.MIN_VALUE) {
+      return 0
+    }
+    if (isNaN(+value)) {
+      return 0
+    } else {
+      return parseInt(value)
+    }
+  },
+
+  toLength: function (value) {
+    if (value > Number.MAX_VALUE) {
+      return 4294967295
+    }
+    if (value < Number.MIN_VALUE) {
+      return 0
+    }
+    if (isNaN(+value)) {
+      return 0
+    } else {
+      return parseInt(value)
+    }
+  },
+
+  toNumber: function (value) {
+    if (value > Number.MAX_VALUE) {
+      return Infinity
+    }
+    if (value < Number.MIN_VALUE) {
+      return 5e-324
+    }
+    if (isNaN(+value)) {
+      return 0
+    } else {
+      return +value
+    }
+  },
+
+  assign: function (object, ...source) {
+    source.forEach((item) => {
+      for (let key of Object.keys(item)) {
+        object[key] = item[key]
+      }
+    });
+    return object;
+  },
+
+  toSafeInteger: function (value) {
+    if (value > Number.MAX_VALUE) {
+      return 9007199254740991
+    }
+    if (value < Number.MIN_VALUE) {
+      return 0
+    }
+    if (isNaN(+value)) {
+      return 0
+    } else {
+      return parseInt(value)
+    }
+  },
+
+  add: function (augend, addend) {
+    return augend + addend
+  },
+
+  ceil: function (number, precision = 0) {
+    return Math.ceil(number * 10 ** precision) / 10 ** precision
+  },
+
+  divide: function (augend, addend) {
+    return augend / addend
+  },
+
+  floor: function (number, precision = 0) {
+    return Math.floor(number * 10 ** precision) / 10 ** precision
+  },
+
+  max: function (array) {
+    if (array.length === 0) {
+      return undefined
+    }
+    if (array.length > 0) {
+      return Math.max(...array)
+    }
+  },
+
+  maxBy: function (array, iteratee = _.identity) {
+    if (typeof iteratee === "function") {
+      let max = 0
+      for (let item of array) {
+        if (max < iteratee(item)) {
+          max = iteratee(item)
+          result = item
+        }
+      }
+      return result
+    }
+    if (typeof iteratee === "string") {
+      let max = 0
+      for (let item of array) {
+        if (max < item[iteratee]) {
+          max = item[iteratee]
+          result = item
+        }
+      }
+      return result
+    }
+  },
+
+  mean: function (array) {
+    let sum = 0
+    for (let item of array) {
+      sum = sum + item
+    }
+    return sum / array.length
+  },
+
+  min: function (array) {
+    if (array.length === 0) {
+      return undefined
+    }
+    if (array.length > 0) {
+      return Math.min(...array)
+    }
+  },
+
+  min: function (array, iteratee = _.identity) {
+    if (typeof iteratee === "function") {
+      let min = Infinity
+      for (let item of array) {
+        if (min > iteratee(item)) {
+          min = iteratee(item)
+          result = item
+        }
+      }
+      return result
+    }
+    if (typeof iteratee === "string") {
+      let min = Infinity
+      for (let item of array) {
+        if (min > item[iteratee]) {
+          min = item[iteratee]
+          result = item
+        }
+      }
+      return result
+    }
+  },
+
+  multiply: function (multiplier, multiplicand) {
+    return multiplier * multiplicand
+  },
+
+  round: function (number, precision = 0) {
+    return Math.ceil(number * 10 ** precision) / 10 ** precision
+  },
+
+  subtract: function (minuend, subtrahend) {
+    return minuend - subtrahend
+  },
+
+  sum: function (array) {
+    let sum = 0
+    for (let item of array) {
+      sum = sum + item
+    }
+    return sum
+  },
+
+  sumBy: function (array, iteratee = _.identity) {
+    if (typeof iteratee === "function") {
+      let sum = 0
+      for (let item of array) {
+        sum = sum + iteratee(item)
+      }
+      return sum
+    }
+    if (typeof iteratee === "string") {
+      let sum = 0
+      for (let item of array) {
+        sum = sum + item[iteratee]
+      }
+      return sum
+    }
+  },
+
+  clamp: function (number, lower, upper) {
+    if (number < lower && number < upper) {
+      return lower
+    } else {
+      return upper
+    }
+  },
+
+  inRange: function (number, start = 0, end) {
+    if (start > end) {
+      newStart = start
+      start = end
+      end = newStart
+    }
+    if (number >= start && number < end) {
+      return true
+    }
+    return false
+  },
+
+  random: function (lower = 0, upper = 1, floating) {
+    if (floating === true) {
+      return Math.random() * (upper - lower) + lower
+    } else if (lower != parseInt(lower) || upper != parseInt(lower)) {
+      return Math.random() * (upper - lower) + lower
+    } else {
+      return Math.floor(Math.random() * (upper - lower) + lower)
+    }
+  },
+
+  assign: function (object, ...sources) {
+    for (let item of sources) {
+      for (let iterator of Object.keys(item)) {
+        object[iterator] = item[iterator]
+      }
+    }
+    return object
+  },
+
+  at: function (object, paths) {
+    let regExp = /\w+/g
+    let array = []
+    paths = paths.map(path => path.match(regExp))
+    paths.forEach(path => {
+      let value = object
+      for (let item of path) {
+        value = value[item]
+      }
+      array.push(value)
+    })
+    return array
   }
 
 }
