@@ -2169,6 +2169,15 @@ var jeiuh = {
     return object
   },
 
+  assignIn: function (object, ...source) {
+    for (let item of source) {
+      for (let key in item) {
+        object[i] = item[key]
+      }
+    }
+    return object
+  },
+
   at: function (object, paths) {
     let regExp = /\w+/g
     let array = []
