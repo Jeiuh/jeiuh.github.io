@@ -2195,9 +2195,9 @@ var jeiuh = {
   defaults: function (...source) {
     let object = {}
     for (let item of source) {
-      for (let key in item) {
-        if (!(key in object)) {
-          object[key] = item[key]
+      for (let k in item) {
+        if (!(k in object)) {
+          object[k] = item[k]
         }
       }
     }
