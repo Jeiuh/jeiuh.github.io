@@ -2190,6 +2190,146 @@ var jeiuh = {
       array.push(value)
     })
     return array
+  },
+  
+  defaults: function (...source) {
+    let object = {}
+    for (let item of source) {
+      for (let newKey in item) {
+        if (!(newKey in object)) {
+          object[newKey] = item[newKey]
+        }
+      }
+    }
+    return object
+  },
+
+  defaultsDeep: function (object, ...sources) {
+    for (let item of sources) {
+      for (let newKey in item) {
+        if (!object[newKey]) {
+          object[newKey] = item[newKey]
+        } else if (typeof item[newKey] === "object") {
+          defaultsDeep(object[newKey], item[newKey])
+        }
+      }
+    }
+    return object
+  },
+
+  findKey: function (object, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
+    for (let newKey in object) {
+      if (newPredicate(object[newKey])) {
+        return newKey
+      } else {
+        return undefined
+      }
+    }
+  },
+
+  findLastKey: function (object, predicate = _.identity) {
+    function iteratee(predicate) {
+      if (typeof predicate === 'function') {
+        return predicate
+      }
+      if (typeof predicate === 'string') {
+        return _.property(predicate)
+      }
+      if (Array.isArray(predicate)) {
+        return _.matchesProperty(predicate)
+      }
+      if (typeof predicate === 'object') {
+        return _.matches(predicate)
+      }
+    }
+
+    var newPredicate = iteratee(predicate)
+
+    let newObject = {}
+    for (let item of Object.keys(object).reverse()) {
+      newObject[item] = true
+    }
+    for (let newKey in object) {
+      newObject[newKey] = object[newKey]
+    }
+    for (let newKey in newObject) {
+      if (newPredicate(newObject[newKey])) {
+        return newKey
+      } else {
+        return undefined
+      }
+    }
+  },
+
+  forIn: function (object, iteratee = _.identity) {
+    for (let newKey in object) {
+      if (!iteratee(object[newKey], newKey, object)) {
+        break
+      }
+    }
+    return object
+  },
+
+  forInRight: function (object, iteratee = _.identity) {
+    let keys = []
+    for (let newKey in object) {
+      keys.push(newKey)
+    }
+    let keys = keys.reverse()
+    for (let newKey of keys) {
+      if (!iteratee(object[newKey], newKey, object)) {
+        break
+      }
+    }
+    return object
+  },
+
+  forOwn: function (object, iteratee = _.identity) {
+    let keys = Object.keys(object)
+    for (let newKey of keys) {
+      if (!iteratee(object[newKey], newKey, object)) {
+        break
+      }
+    }
+    return object
+  },
+
+  forOwnRight: function (object, iteratee = _.identity) {
+    let keys = Object.keys(object).reverse()
+    for (let newKey of keys) {
+      if (!iteratee(object[newKey], newKey, object)) {
+        break
+      }
+    }
+    return object
+  },
+
+  functions: function (object) {
+    let keys = Object.keys(object)
+    let result = []
+    for (let newKey of keys) {
+      if (typeof object[newKey] === "function") {
+        result.push(newKey)
+      }
+    }
+    return result
   }
 
 }
