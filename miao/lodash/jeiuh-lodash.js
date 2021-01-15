@@ -2292,8 +2292,8 @@ var jeiuh = {
     for (let newKey in object) {
       keys.push(newKey)
     }
-    keys = keys.reverse()
-    for (let newKey of keys) {
+    newKeys = keys.reverse()
+    for (let newKey of newKeys) {
       if (!iteratee(object[newKey], newKey, object)) {
         break
       }
