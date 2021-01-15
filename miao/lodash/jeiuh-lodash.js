@@ -2292,7 +2292,7 @@ var jeiuh = {
     for (let newKey in object) {
       keys.push(newKey)
     }
-    let keys = keys.reverse()
+    keys = keys.reverse()
     for (let newKey of keys) {
       if (!iteratee(object[newKey], newKey, object)) {
         break
@@ -2325,6 +2325,16 @@ var jeiuh = {
     let keys = Object.keys(object)
     let result = []
     for (let newKey of keys) {
+      if (typeof object[newKey] === "function") {
+        result.push(newKey)
+      }
+    }
+    return result
+  },
+
+  functionsIn: function (object) {
+    let result = []
+    for (let newKey in object) {
       if (typeof object[newKey] === "function") {
         result.push(newKey)
       }
