@@ -2204,7 +2204,7 @@ var jeiuh = {
     return object
   },
 
-  defaultsDeep: function (object, ...sources) {
+  defaultsDeep: function defaultsDeep(object, ...sources) {
     for (let item of sources) {
       for (let newKey in item) {
         if (!object[newKey]) {
