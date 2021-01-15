@@ -2139,6 +2139,10 @@ var jeiuh = {
   },
 
   inRange: function (number, start = 0, end) {
+    if (end == undefined) {
+      end = start
+      start = 0
+    }
     if (start > end) {
       newStart = start
       start = end
@@ -2172,7 +2176,7 @@ var jeiuh = {
   assignIn: function (object, ...source) {
     for (let item of source) {
       for (let key in item) {
-        object[i] = item[key]
+        object[key] = item[key]
       }
     }
     return object
