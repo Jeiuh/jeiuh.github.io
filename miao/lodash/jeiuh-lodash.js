@@ -882,17 +882,17 @@ var jeiuh = {
 
   get: function (obj, path, defaultValue) {
     if (typeof path === 'string') {
-      let reg = /\w+/g;
-      path = path.match(reg);
+      let reg = /\w+/g
+      path = path.match(reg)
     }
     for (let v of path) {
       if (obj[v]) {
-        obj = obj[v];
+        obj = obj[v]
       } else {
-        return defaultValue;
+        return defaultValue
       }
     }
-    return obj;
+    return obj
   },
 
   isMatch: function (object, source) {
