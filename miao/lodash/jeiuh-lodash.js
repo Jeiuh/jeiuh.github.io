@@ -880,18 +880,19 @@ var jeiuh = {
     }
   },
 
-  get: function (object, path, defaultValue) {
-    var names = path.split('.')
-
-    for (var name of names) {
-      if (name in Object(object)) {
-        object = object[name]
+  get: function (obj, path, defaultValue) {
+    if (typeof path === 'string') {
+      let reg = /\w+/g;
+      path = path.match(reg);
+    }
+    for (let v of path) {
+      if (obj[v]) {
+        obj = obj[v];
       } else {
-        return defaultValue
+        return defaultValue;
       }
     }
-    return object
-
+    return obj;
   },
 
   isMatch: function (object, source) {
