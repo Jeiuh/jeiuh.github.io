@@ -2345,6 +2345,330 @@ var jeiuh = {
       }
     }
     return result
+  },
+  
+  has: function (object, path) {
+    if (typeof path === 'string') {
+      let reg = /\w+/g
+      path = path.match(reg)
+    }
+    for (let item of path) {
+      if (!object.hasOwnProperty(item)) {
+        return false
+      }
+      object = object[item]
+    }
+    return true
+  },
+
+  hasIn: function (object, path) {
+    if (typeof path === 'string') {
+      let reg = /\w+/g
+      path = path.match(reg)
+    }
+    for (let item of path) {
+      if (item in object) {
+        object = object[item];
+      } else {
+        return false;
+      }
+    }
+    return true
+  },
+
+  invert: function (object) {
+    let keys = Object.keys(object).reverse()
+    let values = Object.values(object).reverse()
+    let newObject = {}
+    for (let value of values) {
+      newObject[value] = true
+    }
+    let newkeys = Object.keys(newObject)
+    for (let i = 0; i < newkeys.length; i++) {
+      newObject[newkeys[i]] = keys[i]
+    }
+    return newObject
+  },
+
+  invertBy: function (object, iteratee = _.identity) {
+    let keys = Object.keys(object)
+    let newObject = {}
+    for (let key of keys) {
+      let newValue = object[key]
+      if (iteratee) {
+        newValue = iteratee(newValue)
+      }
+      if (newObject[newValue]) {
+        newObject[newValue].push(key)
+      } else {
+        newObject[newValue] = [key]
+      }
+    }
+    return newObject
+  },
+
+  invoke: function (obj, path, ...args) {
+    if (typeof path === 'string') {
+      let reg = /\w+/g;
+      path = path.match(reg);
+    }
+    for (let item of path) {
+      if (typeof obj[item] === 'function') {
+        if (path[path.length - 1] === item) {
+          let func = item
+          return obj[func](...args)
+        } else {
+          obj = obj[item]()
+          continue
+        }
+      }
+      if (obj[item]) {
+        obj = obj[item];
+      } else {
+        return defaultValue;
+      }
+    }
+  },
+
+  keys: function (object) {
+    if (typeof object === 'object') {
+      return Object.keys(object)
+    }
+    if (typeof object === 'string') {
+      let newArray = []
+      for (let i = 0; i < object.length; i++) {
+        newArray.push(i.toString())
+
+      }
+      return newArray
+    }
+  },
+
+  keysIn: function (object) {
+    if (typeof object === 'object') {
+      let objectA = []
+      for (let key in object) {
+        objectA.push(key)
+      }
+      return objectA
+    }
+    if (typeof object === 'string') {
+      let newArray = []
+      for (let i = 0; i < object.length; i++) {
+        newArray.push(i.toString())
+
+      }
+      return newArray
+    }
+  },
+
+  mapKeys: function (object, iteratee = _.identity) {
+    let keys = Object.keys(object)
+    let newObj = {}
+    for (let key of keys) {
+      newKey = iteratee(object[key], key)
+      newObj[newKey] = object[key]
+    }
+    return newObj
+  },
+
+  mapValues: function (object, iteratee = _.identity) {
+    let keys = Object.keys(object)
+    let values = Object.values(object)
+    let newObj = {}
+    if (typeof iteratee === 'function') {
+      let newVals = []
+      for (let value of values) {
+        value = iteratee(value)
+        newVals.push(value)
+      }
+      for (let i = 0; i < keys.length; i++) {
+        newObj[keys[i]] = newVals[i]
+      }
+    }
+    if (typeof iteratee === 'string') {
+      let newVals = []
+      for (let value of values) {
+        value = value[iteratee]
+        newVals.push(value)
+      }
+      for (let i = 0; i < keys.length; i++) {
+        newObj[keys[i]] = newVals[i]
+      }
+    }
+    return newObj
+  },
+
+  omit: function (object, props) {
+    for (let prop of props) {
+      delete object[prop]
+    }
+    return object
+  },
+
+  omitBy: function (object, predicate = _.identity) {
+    for (let key in object) {
+      if (predicate(object[key])) {
+        delete object[key]
+      }
+    }
+    return object
+  },
+
+  pick: function (object, props) {
+    let newObj = {}
+    for (let prop of props) {
+      newObj[prop] = object[prop]
+    }
+    return newObj
+  },
+
+  omitBy: function (object, predicate = _.identity) {
+    let newObj = {}
+    for (let key of Object.keys(object)) {
+      if (predicate(object[key])) {
+        newObj[key] = object[key]
+      }
+    }
+    return newObj
+  },
+
+  result: function (object, path, defaultValue) {
+    if (typeof path === 'string') {
+      let reg = /\w+/g;
+      path = path.match(reg);
+    }
+    for (let item of path) {
+      if (object[item]) {
+        object = object[item]
+      } else {
+        return defaultValue
+      }
+    }
+    return object
+  },
+
+  set: function (object, path, val) {
+    let reg = /\w+/g
+    path = path.match(reg)
+    var len = path.length
+    var p = object
+    for (var i = 0; i < len - 1; i++) {
+      if (p[path[i]] == undefined) {
+        if (!isNaN(Number(path[i + 1]))) {
+          p[path[i]] = []
+        } else {
+          p[path[i]] = {}
+        }
+      }
+      p = p[path[i]]
+    }
+    p[path[len - 1]] = val
+    return object
+  },
+
+  toPairs: function (object) {
+    let arrays = []
+    let keys = Object.keys(object)
+    for (let key of keys) {
+      let temp = []
+      temp.push(key, object[key])
+      arrays.push(temp)
+    }
+    return arrays
+  },
+
+  toPairsIn: function (object) {
+    let arrays = []
+    let keys = []
+    for (let key in object) {
+      keys.push(key)
+    }
+    for (let key of keys) {
+      let temp = []
+      temp.push(key, object[key])
+      arrays.push(temp)
+    }
+    return arrays
+  },
+
+  unset: function (obj, path) {
+    let reg = /\w+/g
+    path = path.match(reg)
+    let len = path.length
+    for (let i = 0; i < len - 1; i++) {
+      if (obj[path[i]]) {
+        obj = obj[path[i]]
+      }
+    }
+    delete obj[path[len - 1]]
+    return true
+  },
+
+  update: function (object, path, updater) {
+    let reg = /\w+/g
+    path = path.match(reg)
+    var len = path.length
+    var p = object
+    for (var i = 0; i < len - 1; i++) {
+      if (p[path[i]] == undefined) {
+        if (!isNaN(Number(path[i + 1]))) {
+          p[path[i]] = []
+        } else {
+          p[path[i]] = {}
+        }
+      }
+      p = p[path[i]]
+    }
+    p[path[len - 1]] = updater(p[path[len - 1]])
+    return object
+  },
+
+  values: function (object) {
+    if (typeof object === 'object') {
+      let objectV = Object.values(object)
+      return objectV
+    }
+    if (typeof object === 'string') {
+      let newArray = []
+      for (let i = 0; i < object.length; i++) {
+        newArray.push(object[i])
+      }
+      return newArray
+    }
+  },
+
+  valuesIn: function (object) {
+    let objectV = []
+    for (let key in object) {
+      objectV.push(object(key))
+    }
+    return objectV
+  },
+
+  escape: function (string = "") {
+    return string.replace(/[\&\>\<\"\']/g, (item) => {
+      switch (item) {
+        case "&":
+          return "&amp;";
+        case "<":
+          return "&lt;";
+        case ">":
+          return "&gt";
+        case '"':
+          return "&quot;";
+        case "'":
+          return "&apos;";
+        case "`":
+          return "&grave;";
+        default:
+          return item;
+      }
+    })
+  },
+
+  escapeRegExp: function (string = '') {
+    return string.replace(/[\^\$\s\.\*\+\?\(\)\[\]\,\|]/g, '\\$&')
   }
 
 }
