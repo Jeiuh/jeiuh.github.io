@@ -2167,8 +2167,8 @@ var jeiuh = {
 
   assign: function (object, ...sources) {
     for (let item of sources) {
-      for (let iterator of Object.keys(item)) {
-        object[iterator] = item[iterator]
+      for (let it of Object.keys(item)) {
+        object[it] = item[it]
       }
     }
     return object
@@ -2196,13 +2196,13 @@ var jeiuh = {
     })
     return array
   },
-  
+
   defaults: function (...source) {
     let object = {}
     for (let item of source) {
-      for (let newKey in item) {
-        if (!(newKey in object)) {
-          object[newKey] = item[newKey]
+      for (let key in item) {
+        if (!(key in object)) {
+          object[key] = item[key]
         }
       }
     }
@@ -2297,8 +2297,8 @@ var jeiuh = {
     for (let newKey in object) {
       keys.push(newKey)
     }
-    newKeys = keys.reverse()
-    for (let newKey of newKeys) {
+    keys = keys.reverse()
+    for (let newKey of keys) {
       if (!iteratee(object[newKey], newKey, object)) {
         break
       }
@@ -2346,7 +2346,7 @@ var jeiuh = {
     }
     return result
   },
-  
+
   has: function (object, path) {
     if (typeof path === 'string') {
       let reg = /\w+/g
@@ -2669,6 +2669,209 @@ var jeiuh = {
 
   escapeRegExp: function (string = '') {
     return string.replace(/[\^\$\s\.\*\+\?\(\)\[\]\,\|]/g, '\\$&')
+  },
+
+  pad: function (string = "", length = 0, chars = " ") {
+    var count = 0
+    while (string.length < length) {
+      count++
+      if (count % 2) {
+        string += chars
+      } else {
+        string = chars + string
+      }
+      while (string.length > length) {
+        string = string.slice(0, -1)
+      }
+    }
+    return string
+  },
+
+  padend: function (string = "", length = 0, chars = " ") {
+    while (string.length < length) {
+      string += chars
+      while (string.length > length) {
+        string = string.slice(0, -1);
+      }
+    }
+    return string;
+  },
+
+  padStart: function (string = "", length = 0, chars = " ") {
+    while (string.length < length) {
+      string = chars + string
+      while (string.length > length) {
+        string = string.slice(0, -1);
+      }
+    }
+    return string;
+  },
+
+  parseInt: function (string, radix = 10) {
+    return parseInt(string, radix)
+  },
+
+  repeat: function (string = '', n = 1) {
+    for (i = 0; i < n; i++) {
+      console.log(string)
+    }
+  },
+
+  replace: function (string = '', pattern, replacement) {
+    return string.replace(pattern, replacement)
+  },
+
+  snakeCase: function (string = '') {
+    let reg = /(?<=\b|-)\w{3,6}/g
+    string = string.match(reg)
+    if (string.length === 1) {
+      let newStr = string.toString().slice(0, 3).toLowerCase() + '_' + string.toString().slice(3).toLowerCase()
+      return newStr
+    } else {
+      let newStr = string.toString().replace(',', '_')
+      return newStr.toLowerCase()
+    }
+  },
+
+  split: function (string = '', separator, limit) {
+    return string.split(separator, limit + 1)
+  },
+
+  startCase: function (string = '') {
+    let reg = /(?<=\b|-)\w{3,6}/g
+    string = string.match(reg)
+    if (string.length === 1) {
+      let newStr = string.toString().slice(0, 3).toLowerCase() + ' ' + string.toString().slice(3).toLowerCase()
+      return newStr
+    } else {
+      let newStr = string.toString().replace(',', ' ')
+      return newStr.toLowerCase()
+    }
+  },
+
+  startsWith: function (string = '', target, position = 0) {
+    return string[position].includes(target)
+  },
+
+  toLower: function (string = '') {
+    return string.toLowerCase()
+  },
+
+  toUpper: function (string = '') {
+    return string.toUpperCase()
+  },
+
+  unescape: function (string = '') {
+    return string.replace(/(\&amp;)|(\&lt;)|(\&gt;)|(\&quot;)|(\&apos;)|(\&grave;)/, (item) => {
+      switch (item) {
+        case "&amp;":
+          return "&"
+        case "&lt;":
+          return "<"
+        case "&gt;":
+          return ">"
+        case '&quot;':
+          return '"'
+        case "&apos;":
+          return "'"
+        case "&grave;":
+          return "`"
+        default:
+          return it
+      }
+    })
+  },
+
+  defaultTo: function (value, defaultValue) {
+    if (value) {
+      return value
+    } else {
+      return defaultValue
+    }
+  },
+
+  range: function (start = 0, end, step = 1) {
+    if (start > 0 && end == undefined && step == undefined) {
+      let arr = []
+      end = start
+      for (let i = 0; i < end; i++) {
+        arr.push(i)
+      }
+      return arr
+    }
+    if (start < 0) {
+      let arr = []
+      for (let i = 0; i > start; i--) {
+        arr.push(i)
+      }
+      return arr
+    }
+    if (start > 0 && end > 0 && step == undefined) {
+      let arr = []
+      for (let i = start; i < end; i++) {
+        arr.push(i)
+      }
+      return arr
+    }
+    if (start <= 0 && end < 0 && step < 0) {
+      let arr = []
+      for (let i = 0; i > end; i += step) {
+        arr.push(i)
+      }
+      return arr
+    }
+    if (start >= 0 && step != 0) {
+      let arr = []
+      for (let i = 0; i < end; i += step) {
+        arr.push(i)
+      }
+      return arr
+    }
+    if (step == 0) {
+      let arr = []
+      for (let i = start; i < end; i++) {
+        arr.push(start)
+      }
+      return arr
+    }
+  },
+
+  times: function (n, iteratee = _.identity) {
+    let arr = [];
+    for (let i = 0; i < n; i++) {
+      arr.push(iteratee(i));
+    }
+    return arr;
+  },
+
+  toPath: function (value) {
+    let reg = /\w+/g;
+    value = value.match(reg);
+    return value;
+  },
+
+  cloneDeep: function (value) {
+    let newVal = {}
+    newVal = JSON.parse(JSON.stringify(value))
+    return newVal
+  },
+
+  concat: function (array, ...values) {
+    let arr = []
+    arr = array.concat(...values)
+    return arr
+  },
+
+  pullAt: function (array, ...indexes) {
+    let arr = []
+    for (let it of indexes) {
+      arr.push(array[it])
+    }
+    for (let it of arr) {
+      let i = array.indexOf(it)
+      array.splice(i, 1)
+    }
+    return arr
   }
 
 }
