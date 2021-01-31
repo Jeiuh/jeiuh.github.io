@@ -2872,6 +2872,41 @@ var jeiuh = {
       array.splice(i, 1)
     }
     return arr
+  },
+  
+  matches: function (source) {
+    return (obj) => {
+      for (let ide in source) {
+        if (obj[ide] !== source[ide]) {
+          return false
+        }
+      }
+      return true
+    }
+  },
+
+  once: function (func) {
+    let flag = false
+    let ret
+    return function () {
+      if (!flag) {
+        flag = !flag
+        return ret = func.apply(this, arguments)
+      }
+      return ret
+    }
+  },
+
+  spread: function (func, start = 0) {
+    return function (arr) {
+      return func(...arr.slice(start))
+    }
+  },
+
+  constant: function (value) {
+    return function () {
+      return value
+    }
   }
 
 }
