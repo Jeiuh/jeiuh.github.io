@@ -2862,7 +2862,7 @@ var jeiuh = {
     return arr
   },
 
-  pullAt: function (array, ...indexes) {
+  pullAt: function (array, indexes) {
     let arr = []
     for (let it of indexes) {
       arr.push(array[it])
